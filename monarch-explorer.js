@@ -10,8 +10,8 @@
 	years = [2008, 2009, 2010, 2011, 2012, 2013],
 	loaded = {},
 	maxPhotos = 0,
-	errCount = 0; //,
-	//heatmapGradient = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'];
+	errCount = 0,
+	heatmapGradient = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'];
 
 
 	function getTodayDateForYear(year) {
@@ -90,8 +90,8 @@
 		if(!heatmaps[year]) {
 			heatmaps[year] = new google.maps.visualization.HeatmapLayer({
 				data: heatmapdata[year],
-				maxIntensity: (heatmapdata[year].length / maxPhotos) //,
-			//	gradient: heatmapGradient
+				maxIntensity: (heatmapdata[year].length / maxPhotos),
+				gradient: heatmapGradient
 			});
 		}
 
