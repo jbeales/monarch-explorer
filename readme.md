@@ -1,5 +1,7 @@
 # Monarch Migration Explorer
 
+See this map online at http://monarchs.johnbeales.com
+
 This generates a Google Map of sightings of Monarch butterflies over the past
 six years.
 
