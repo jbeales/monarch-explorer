@@ -1,0 +1,2 @@
+window.monarch_gmap_key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+window.monarch_flickr_key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';

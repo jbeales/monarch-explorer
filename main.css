@@ -1,0 +1,149 @@
+html, body {
+	width:100%;
+	height:100%;
+	margin:0;
+	padding:0;
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: 100;
+}
+
+a:link, a:active, a:visited, a:hover {
+	color:#eee;
+}
+
+
+.migration-map, .migration-map-container {
+	width:100%;
+	height:100%;
+	background:#efefff;
+	position:fixed;
+	top:0;
+	left:0;
+	
+}
+
+.toolbar {
+	display:block;
+	position: relative;
+	right:0;
+	top:0;
+	bottom:0;
+	z-index:100;
+	width:160px;
+	background:#000;
+	background:rgba(0,0,0,0.3);
+	float:right;
+	min-height: 100%;
+	padding:0 0.5em 2em 0.5em;
+
+	color:#eee;
+}
+
+
+
+.toolbar .button {
+	border:1px solid #eee;
+	border-radius: 3px;
+	-moz-border-radius:3px;
+	padding:0.25em 0.75em;
+	text-decoration: none;
+	font-weight: 100;
+	font-size:75%;
+	display:inline-block;
+	margin:0.25em 0.25em;
+	cursor: pointer;
+
+	-moz-transition:background-color 0.25s;
+	-webkit-transition:background-color 0.25s;
+	transition:background-color 0.25s;
+}
+
+.toolbar .button:hover,
+.toolbar .button:focus,
+.toolbar .button:active,
+.toolbar .button.current {
+	color:#000;
+	background:#eee;
+}
+
+.toolbar p {
+	font-size:75%;
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: lighter;
+	line-height:1.25em;
+}
+
+.toolbar .loading {
+	font-family: Raleway, sans-serif;
+	margin:1em 0;
+	line-height:1.25em;
+	font-size:118%;
+}
+
+.dataloaded .toolbar .loading {
+	display:none;
+}
+
+.toolbar .controlgroup {
+	display:none;
+}
+
+.dataloaded .toolbar .controlgroup {
+	display:block;
+}
+
+.toolbar .credits {
+	font-size:50%;
+	line-height:1.25em;
+	position: absolute;
+	bottom:0.5em;
+}
+
+h1 {
+	font-size: 164%;
+	font-family: Raleway, sans-serif;
+}
+
+h2 {
+	font-size:100%;
+	font-family: Raleway, sans-serif;
+}
+
+h3 {
+	font-size:100%;
+	font-family: Raleway, sans-serif;
+}
+
+
+.how-its-done {
+	opacity: 1.0;
+	background:#000;
+	background:rgba(0,0,0,0.3);
+	color:#eee;
+
+	width:50%;
+	padding:1em;
+	border-radius: 0.5em;
+	position: absolute;
+	left:100px;
+	right:160px;
+	top:20%;
+
+	-moz-transition: top 0.5s, opacity 1.5s;
+	-webkit-transition: top 0.5s, opacity 1.5s;
+	transition: top 0.5s, opacity 1.5s;
+}
+
+.how-its-done.invisible {
+	opacity: 0;
+	top:-100%;
+
+	-moz-transition: top 1.5s, opacity 0.5s;
+	-webkit-transition: top 1.5s, opacity 0.5s;
+	transition: top 1.5s, opacity 0.5s;
+}
+
+.morelink {
+	font-size:75%;
+	cursor: pointer;
+}
