@@ -30,7 +30,7 @@ heatmapGradient = ['#ffffff','#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','
 
 		// note getMonth() returns 0-11, not 1-12, so we add 1
 		date = year + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-		date = year + '-12-31';
+	//	date = year + '-12-31';
 
 		return date;
 	}
