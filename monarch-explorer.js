@@ -20,7 +20,6 @@
 	//heatmapGradient = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'];
 
 
-
 	function getTodayDateForYear(year) {
 		var today = new Date(), date;
 
@@ -30,7 +29,6 @@
 
 		// note getMonth() returns 0-11, not 1-12, so we add 1
 		date = year + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-		date = year + '-12-31';
 
 		return date;
 	}
@@ -172,47 +170,37 @@
 					if(!sightings[year]) {
 						sightings[year] = [];
 						heatmapdata[year] = [];
-						csv[year] = "date,latitude,longitude\n";
 					}
 
 
 					var sighting_list = '', photo, sighting, dateParts, sighting_id;
 
-					console.log(year +' has ' + photos[year].length + ' photos.');
+
 
 					for (var i = photos[year].length - 1; i >= 0; i--) {
 						photo = photos[year][i];
 
-
 						if( isInBoundingBox( photo.latitude, photo.longitude ) ) {
-
 
 							dateParts = photo.datetaken.split(' ')[0].split('-');
 							sighting_id = photo.place_id + dateParts[0]+dateParts[1]+dateParts[2];
 							if( sighting_list.indexOf(sighting_id) == -1 ) {
 
 
-								dateParts = photo.datetaken.split(' ')[0].split('-');
-								sighting_id = photo.place_id + dateParts[0]+dateParts[1]+dateParts[2];
-								if( sighting_list.indexOf(sighting_id) == -1 ) {
 
-									sighting = {
-										'location': new google.maps.LatLng(photo.latitude, photo.longitude),
-										'taken' : {
-											'year': dateParts[0],
-											'month': dateParts[1],
-											'day': dateParts[2]
-										}
-									};
+								sighting = {
+									'location': new google.maps.LatLng(photo.latitude, photo.longitude),
+									'taken' : {
+										'year': dateParts[0],
+										'month': dateParts[1],
+										'day': dateParts[2]
+									}
+								};
 
-									sightings[year].push(sighting);
-									heatmapdata[year].push(sighting.location);
+								sightings[year].push(sighting);
+								heatmapdata[year].push(sighting.location);
 
-									sighting_list += sighting_id;
-									csv[year] += dateParts[0] + "-" + dateParts[1] + "-" + dateParts[2] + "," + photo.latitude + "," + photo.longitude + "\n";
-
-								}
-
+								sighting_list += sighting_id;
 							}
 						}
 					}
@@ -221,6 +209,8 @@
 					if(heatmapdata[year].length > maxPhotos) {
 						maxPhotos = heatmapdata[year].length;
 					}
+
+					//console.log( heatmapdata[year].length + ' sightings in ' + year );
 
 					loaded[year] = true;
 					maybeFinishedLoading();
@@ -280,14 +270,6 @@
 
 		
 	};
-
-	window.logCSVForYear = function(year) {
-		if( csv[year] ) {
-			console.log(csv[year]);
-		} else {
-			console.log('no csv available for ' + year );
-		}
-	}
 
 
 	function initMap() {
