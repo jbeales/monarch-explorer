@@ -11,7 +11,7 @@
 	loaded = {},
 	maxPhotos = 0,
 	errCount = 0,
-heatmapGradient = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'],
+heatmapGradient = ['#ffffff','#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'],
 	csv = [];
 	bbox = {
 		'maxlat': 90,
@@ -98,8 +98,8 @@ heatmapGradient = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','
 		if(!heatmaps[year]) {
 			heatmaps[year] = new google.maps.visualization.HeatmapLayer({
 				data: heatmapdata[year],
-				maxIntensity: (heatmapdata[year].length / maxPhotos)//,
-				//gradient: heatmapGradient
+				maxIntensity: (heatmapdata[year].length / maxPhotos),
+				gradient: heatmapGradient
 			});
 		}
 
