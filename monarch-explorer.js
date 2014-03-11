@@ -11,7 +11,13 @@
 	loaded = {},
 	maxPhotos = 0,
 	errCount = 0,
-	heatmapGradient = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'];
+	bbox = {
+		'maxlat': 90,
+		'maxlon': -20,
+		'minlat': 0,
+		'minlon': -180
+	};//,
+	//heatmapGradient = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'];
 
 
 	function getTodayDateForYear(year) {
@@ -59,7 +65,7 @@
 			}
 		}
 
-		console.log(photos);
+		//console.log(photos);
 
 		if(doneLoading) {
 			document.body.className = 'dataloaded';
@@ -86,12 +92,12 @@
 
 
 		// for kicks, display the heatmap
-		console.log('Intensity (' + year + '): ' + (heatmapdata[year].length / maxPhotos));
+		//console.log('Intensity (' + year + '): ' + (heatmapdata[year].length / maxPhotos));
 		if(!heatmaps[year]) {
 			heatmaps[year] = new google.maps.visualization.HeatmapLayer({
 				data: heatmapdata[year],
-				maxIntensity: (heatmapdata[year].length / maxPhotos),
-				gradient: heatmapGradient
+				maxIntensity: (heatmapdata[year].length / maxPhotos)//,
+				//gradient: heatmapGradient
 			});
 		}
 
@@ -106,7 +112,6 @@
 		
 		var buttons = document.querySelectorAll('.years .button.current');
 		for(var i=0; i<buttons.length; i++) {
-			console.log(buttons[i].className);
 			buttons[i].className = buttons[i].className.replace(' current', '');
 		}
 
@@ -121,7 +126,21 @@
 		console.log(resp);
 
 		document.querySelectorAll('.toolbar .loading')[0].innerHTML = 'Uh-oh! There was an error loading photo data. Refresh the page to try again.';
+	}
 
+	function isInBoundingBox(lat, lon) {
+
+		// is the latitude outside of the allowed range?
+		if( bbox.maxlat < lat || bbox.minlat > lat ) {
+			return false;
+		}
+
+		// is the longitude out of the allowed range?
+		if( bbox.maxlon < lon || bbox.minlon > lon ) {
+			return false;
+		}
+
+		return true;
 
 	}
 
@@ -161,25 +180,28 @@
 					for (var i = photos[year].length - 1; i >= 0; i--) {
 						photo = photos[year][i];
 
-						dateParts = photo.datetaken.split(' ')[0].split('-');
-						sighting_id = photo.place_id + dateParts[0]+dateParts[1]+dateParts[2];
-						if( sighting_list.indexOf(sighting_id) == -1 ) {
+						if( isInBoundingBox( photo.latitude, photo.longitude ) ) {
+
+							dateParts = photo.datetaken.split(' ')[0].split('-');
+							sighting_id = photo.place_id + dateParts[0]+dateParts[1]+dateParts[2];
+							if( sighting_list.indexOf(sighting_id) == -1 ) {
 
 
 
-							sighting = {
-								'location': new google.maps.LatLng(photo.latitude, photo.longitude),
-								'taken' : {
-									'year': dateParts[0],
-									'month': dateParts[1],
-									'day': dateParts[2]
-								}
-							};
+								sighting = {
+									'location': new google.maps.LatLng(photo.latitude, photo.longitude),
+									'taken' : {
+										'year': dateParts[0],
+										'month': dateParts[1],
+										'day': dateParts[2]
+									}
+								};
 
-							sightings[year].push(sighting);
-							heatmapdata[year].push(sighting.location);
+								sightings[year].push(sighting);
+								heatmapdata[year].push(sighting.location);
 
-							sighting_list += sighting_id;
+								sighting_list += sighting_id;
+							}
 						}
 					}
 
@@ -187,6 +209,8 @@
 					if(heatmapdata[year].length > maxPhotos) {
 						maxPhotos = heatmapdata[year].length;
 					}
+
+					//console.log( heatmapdata[year].length + ' sightings in ' + year );
 
 					loaded[year] = true;
 					maybeFinishedLoading();
@@ -209,7 +233,7 @@
 			'per_page': 500,
 			'page':1,
 			'format':'json',
-			'bbox':'-180,0,-20,90',
+//			'bbox':'-180,0,-20,90',
 			'jsoncallback':'monarchFlickrData' + year,
 			'sort': 'date-taken-asc'
 		};
