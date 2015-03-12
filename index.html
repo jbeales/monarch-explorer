@@ -13,7 +13,7 @@
 <h1>Monarch Butterfly Migration Explorer</h1>
 
 <section class="intro">
-<p>There has been a <a href="http://www.ctvnews.ca/sci-tech/where-are-all-the-monarch-butterflies-this-year-1.1374040">huge</a> <a href="http://ca.news.yahoo.com/blogs/geekquinox/where-central-canada-missing-monarch-butterflies-gone-200359985.html">drop</a> in the number of Monarch butterflies that made it to Canada this year. Let's see if we can see the difference using Flickr photos.</p>
+<p>This map was originally created in 2013, when there was a <a href="http://www.ctvnews.ca/sci-tech/where-are-all-the-monarch-butterflies-this-year-1.1374040">huge</a> <a href="http://ca.news.yahoo.com/blogs/geekquinox/where-central-canada-missing-monarch-butterflies-gone-200359985.html">drop</a> in the number of Monarch butterflies that made it to Canada. Let's see if we can see the difference using Flickr photos.</p>
 <p>Using geotagged photos from <a href="http://flickr.com">Flickr</a> we've created a heatmap of the migration of the Monarch butterfly over the past several years.</p>
 </section>
 
@@ -23,21 +23,30 @@
 	<h2>Sightings per year:</h2>
 </div>
 
+<div class="controlgroup">
+<label for="range-selection">Data range for previous years:</label>
+<select id="range-selection">
+<option value="today">Jan 1 &#8211; Today's Date</option>
+<option value="fullyear">Full Year's Data</option>
+</select>
+</div>
+
 <div class="credits">The Monarch Butterfly Migration Explorer was created by <a href="http://johnbeales.com">John Beales</a>.</div>
 </section>
 
 <article class="how-its-done">
 	<h2>Mapping the Monarch Butterfly</h2>
-	<p>By searching Flickr for geotagged photos we can see where people were seeing Monarch butterflies this year, and during the past five years. We get a list of photos captured between January 1 and today's date of each year, then generate a heatmap for each year, using the same scale for each year.</p>
+	<p>By searching Flickr for geotagged photos we can see where people were seeing Monarch butterflies this year, and every year since 2008. We get a list of photos captured between January 1 and today's date of each year, then generate a heatmap for each year, using the same scale for each year.</p>
 
 	<p>The data isn't perfect, for example Flickr itself has had ups & downs over the past few years, and the number of digital cameras that we've been carrying has been changing quickly, but this should give us some idea of what's going on.</p>
 
 	<h3>There are still things I'd like to add if time allows:</h3>
 	<ul>
-		<li>The option to show full-year data for previous years.</li>
+		
 		<li>Automatically advance the years, so we can sit back and watch as the migration changes over time.</li>
 		<li>A way to show only a month or a week at a time of data, so we can watch the migration as it happens.</li>
 		<li>It would be nice to actually see some of the photos.</li>
+		<li><del>The option to show full-year data for previous years.</del> Done!</li>
 	</ul>
 </article>
 <script src="creds.js"></script>

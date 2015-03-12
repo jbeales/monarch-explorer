@@ -92,6 +92,13 @@ a:link, a:active, a:visited, a:hover {
 	display:block;
 }
 
+.controlgroup h2,
+.controlgroup > label {
+	font-family: Raleway, sans-serif;
+	margin:1em 0 0.5em 0;
+	display:block;
+}
+
 .toolbar .credits {
 	font-size:50%;
 	line-height:1.25em;

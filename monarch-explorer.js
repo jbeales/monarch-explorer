@@ -11,29 +11,20 @@
 	loaded = {},
 	maxPhotos = 0,
 	errCount = 0,
+	today = new Date(), 
+	useFullYear = false,
 heatmapGradient = ['#ffffff','#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'],
-	csv = [];
+	csv = [],
+	currentHeatMap;
 	bbox = {
 		'maxlat': 90,
 		'maxlon': -20,
 		'minlat': 0,
 		'minlon': -180
 	};
+	
 
 
-	function getTodayDateForYear(year) {
-		var today = new Date(), date;
-
-		if(!year) {
-			year = today.getFullYear();
-		}
-
-		// note getMonth() returns 0-11, not 1-12, so we add 1
-		date = year + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-	//	date = year + '-12-31';
-
-		return date;
-	}
 
 
 	function callFlickrAPI(params) {
@@ -57,9 +48,7 @@ heatmapGradient = ['#ffffff','#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','
 
 	function maybeFinishedLoading() {
 		var doneLoading = true,
-		yr,
-		yearsgroup = document.querySelectorAll('.years')[0],
-		yrbtn;
+		yr;
 		for(yr in loaded) {
 			if(!loaded[yr]) {
 				doneLoading = false;
@@ -67,30 +56,82 @@ heatmapGradient = ['#ffffff','#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','
 			}
 		}
 
+		
+
 		//console.log(photos);
 
 		if(doneLoading) {
-			document.body.className = 'dataloaded';
-
-			for (var i = 0; i < years.length; i++) {
-				yrbtn = document.createElement('a');
-				yrbtn.appendChild(document.createTextNode(years[i]));
-				yrbtn.addEventListener('click', yearButtonClicked, false);
-				yrbtn.className = 'button';
-				yearsgroup.appendChild(yrbtn);
-			}
+			initializeView();
 			toggleMoreInfo(null);
 		}
 	}
 
+	function initializeView() {
+			var yearsgroup = document.querySelectorAll('.years')[0],
+			yrbtn,
+			currentYearBtn;
 
-	function showHeatMap(year) {
+			// set visuals to a "loading" state
+			document.body.className = '';
+
+
+
+			// process the data
+			setupData();
+
+
+			document.body.className = 'dataloaded';
+
+			if( 0 === yearsgroup.querySelectorAll('a').length ) {
+				for (var i = 0; i < years.length; i++) {
+					yrbtn = document.createElement('a');
+					yrbtn.appendChild(document.createTextNode(years[i]));
+					yrbtn.addEventListener('click', yearButtonClicked, false);
+					yrbtn.className = 'button';
+					yearsgroup.appendChild(yrbtn);
+				}
+			}
+
+			var rangeSelect = document.getElementById('range-selection');
+			if( rangeSelect ) {
+
+				// remove, if it's there, so we don't double up
+				rangeSelect.removeEventListener( 'change', rangeChanged, false );
+				
+				rangeSelect.addEventListener( 'change', rangeChanged, false );
+			}
+
+			// show the currently-selected year, if there is one
+			currentYearBtn = document.querySelector('.years .button.current');
+			if( currentYearBtn ) {
+				showHeatMap( currentYearBtn.innerHTML );
+			}
+	}
+
+
+	function rangeChanged() {
+		if( 'fullyear' === this.value ) {
+			useFullYear = true;
+		} else {
+			useFullYear = false;
+		}
+		//removeHeatMaps();
+		initializeView();
+	}
+
+	function removeHeatMaps() {
 		// clear any existing heatmaps
 		for (var i = heatmaps.length - 1; i >= 0; i--) {
 			if(heatmaps[i] && heatmaps[i].setMap) {
 				heatmaps[i].setMap(null);
 			}
 		}
+	}
+
+
+	function showHeatMap(year) {
+		// clear any existing heatmaps
+		//removeHeatMaps();
 
 
 		// for kicks, display the heatmap
@@ -104,6 +145,10 @@ heatmapGradient = ['#ffffff','#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','
 		}
 
 		heatmaps[year].setMap(map);
+		if( currentHeatMap ) {
+			currentHeatMap.setMap(null);
+		}
+		currentHeatMap = heatmaps[year];
 	}
 
 	function yearButtonClicked(evt) {
@@ -161,7 +206,7 @@ heatmapGradient = ['#ffffff','#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','
 				if(resp.photos.page < resp.photos.pages && resp.photos.photo.length > 0) {
 					var params = JSON.parse(JSON.stringify(flickr_params));
 					params.min_taken_date = year + '-01-01';
-					params.max_taken_date = getTodayDateForYear(year);
+					params.max_taken_date = year + '-12-31';
 					params.page = resp.photos.page + 1;
 					params.jsoncallback = 'monarchFlickrData' + year;
 
@@ -169,22 +214,80 @@ heatmapGradient = ['#ffffff','#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','
 
 				} else if(resp.photos.page == resp.photos.pages || resp.photos.photo.length === 0) {
 
-					if(!sightings[year]) {
-						sightings[year] = [];
-						heatmapdata[year] = [];
-						csv[year] = "date,latitude,longitude\n";
-					}
+					loaded[year] = true;
+					maybeFinishedLoading();
+				}
+			} else {
+				showErrorLoadingPhotos(resp);
+			}
+		};
+
+		var flickr_params = {
+			'method': 'flickr.photos.search',
+			'api_key': flickr_key,
+			'text': 'monarch butterfly -tatoo -tattoo -sketch',
+			'min_taken_date': year + '-01-01',
+			'max_taken_date': year + '-12-31',
+			'content_type': 1,
+			'media': 'photos',
+			'has_geo': 1,
+			'extras': 'geo,date_taken',
+			'per_page': 500,
+			'page':1,
+			'format':'json',
+//			'bbox':'-180,0,-20,90',
+			'jsoncallback':'monarchFlickrData' + year,
+			'sort': 'date-taken-asc'
+		};
+
+		callFlickrAPI(flickr_params);
+
+	}
 
 
-					var sighting_list = '', photo, sighting, dateParts, sighting_id;
+	function isTodayOrEarlier( dateParts ) {
 
-					console.log(year +' has ' + photos[year].length + ' photos.');
+		// Date.getMonth() returns 0-11, so we add 1.
+		if( parseInt(dateParts[1], 10) > ( today.getMonth() + 1 ) ) {
+			return false;
+		} else if( parseInt(dateParts[1], 10) === today.getMonth() ) {
+			if( parseInt( dateParts[2], 10) > today.getDate() ) {
+				return false;
+			}
+		}
 
-					for (var i = photos[year].length - 1; i >= 0; i--) {
-						photo = photos[year][i];
+		return true;
+	}
 
 
-						dateParts = photo.datetaken.split(' ')[0].split('-');
+	function setupData() {
+
+		maxPhotos = 0;
+
+
+		for( year in photos ) {
+			if( photos.hasOwnProperty( year ) ) {
+
+				// reset year's data
+				sightings[year] = [];
+				heatmapdata[year] = [];
+				csv[year] = "date,latitude,longitude\n";
+				delete heatmaps[year];
+				
+
+
+				var sighting_list = '', photo, sighting, dateParts, sighting_id;
+
+				console.log(year +' has ' + photos[year].length + ' photos.');
+
+				for (var i = photos[year].length - 1; i >= 0; i--) {
+					photo = photos[year][i];
+
+
+					dateParts = photo.datetaken.split(' ')[0].split('-');
+		
+					if( useFullYear || isTodayOrEarlier( dateParts ) ) {
+
 						sighting_id = photo.place_id + dateParts[0]+dateParts[1]+dateParts[2];
 						if( sighting_list.indexOf(sighting_id) == -1 ) {
 							if( isInBoundingBox( photo.latitude, photo.longitude ) ) {
@@ -217,43 +320,14 @@ heatmapGradient = ['#ffffff','#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','
 							}
 						}
 					}
-
-					// sort the photos & get them ready for use.
-					if(heatmapdata[year].length > maxPhotos) {
-						maxPhotos = heatmapdata[year].length;
-					}
-
-					loaded[year] = true;
-					maybeFinishedLoading();
 				}
-			} else {
-				showErrorLoadingPhotos(resp);
+
+				// sort the photos & get them ready for use.
+				if(heatmapdata[year].length > maxPhotos) {
+					maxPhotos = heatmapdata[year].length;
+				}
 			}
-		};
-
-		var flickr_params = {
-			'method': 'flickr.photos.search',
-			'api_key': flickr_key,
-			'text': 'monarch butterfly -tatoo -tattoo -sketch',
-			'min_taken_date': year + '-01-01',
-			'max_taken_date': getTodayDateForYear(year),
-			'content_type': 1,
-			'media': 'photos',
-			'has_geo': 1,
-			'extras': 'geo,date_taken',
-			'per_page': 500,
-			'page':1,
-			'format':'json',
-//			'bbox':'-180,0,-20,90',
-			'jsoncallback':'monarchFlickrData' + year,
-			'sort': 'date-taken-asc'
-		};
-
-		callFlickrAPI(flickr_params);
-
-
-
-
+		}
 	}
 
 
