@@ -37,7 +37,7 @@ heatmapGradient = ['#ffffff','#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','
 
 
 	function callFlickrAPI(params) {
-		var url = 'http://api.flickr.com/services/rest/?', stag = document.createElement('script'), isFirst = true;
+		var url = 'https://api.flickr.com/services/rest/?', stag = document.createElement('script'), isFirst = true;
 
 		for ( var param in params ) {
 			if(params.hasOwnProperty(param)) {
