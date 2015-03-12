@@ -7,7 +7,7 @@
 	sightings = [],
 	heatmapdata = [],
 	heatmaps = [],
-	years = [2008, 2009, 2010, 2011, 2012, 2013],
+	years = [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015],
 	loaded = {},
 	maxPhotos = 0,
 	errCount = 0,
